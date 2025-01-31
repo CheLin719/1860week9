@@ -9,6 +9,15 @@ CHIP P2S {
     
     // 2-bit Counter to track bit output (0 to 3)
     Counter(width=2, enable=enable, reset=load, out=count);
+
+    //The way i did it:
+    //4 bit shifter. 
+    //indata[0],indata[1],indata[2],indata[3]
+    //0 - 0 - 0 - 0  <--OFF, enable = 0 & output of 4 bit shiter = 0. ENABLE = 1 IF ALL 4 BIT SHIFTER BITS ARE 0
+    //1 - 0 - 0 - 0  <--ON, indata[0]         sout = (indata[0] AND 4bitshifter) OR (indata[1] AND 4bitshifter) OR (indata[2] AND 4bitshifter) OR (indata[3] AND 4bitshifter) 
+    //0 - 1 - 0 - 0  <--ON, indata[1]
+    //0 - 0 - 1 - 0  <--ON, indata[2]
+    //0 - 0 - 0 - 1  <--ON, indata[3], complete = 1
     
     // Corrected: Use Mux4Way16 to select each bit from the 4-bit stored data
     Mux4Way16(
