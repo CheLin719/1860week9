@@ -1,3 +1,6 @@
 CHIP Counter {
     IN width, enable, reset
+
+    //Make it:
+     // 2-bit Counter to track bit output (0 to 3)
 }
