@@ -12,12 +12,12 @@ CHIP P2S {
     
     // Corrected: Use Mux4Way16 to select each bit from the 4-bit stored data
     Mux4Way16(
-        in0[0..15]=stored_data[0],
-        in1[0..15]=stored_data[1],
-        in2[0..15]=stored_data[2],
-        in3[0..15]=stored_data[3],
+        in0[0..3]=stored_data[0],
+        in1[0..3]=stored_data[1],
+        in2[0..3]=stored_data[2],
+        in3[0..3]=stored_data[3],
         sel=count,
-        out[0..15]=mux_out
+        out[0..3]=mux_out
     );
     
     // Connect mux output to sout
