@@ -1,6 +1,6 @@
 CHIP Counter {
-    IN enable, reset, clock
-    OUT out[2]
+    IN enable, reset, clock;
+    OUT out[2];
 
     PARTS
     Register(in=next[0],reset=true,clock=clock,out=current[0]);
