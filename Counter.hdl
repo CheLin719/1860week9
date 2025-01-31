@@ -1,0 +1,3 @@
+CHIP Counter {
+    IN width, enable, reset
+}
