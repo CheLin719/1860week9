@@ -5,7 +5,7 @@ CHIP P2S {
     PARTS:
     
     // 4-bit Register to store input data
-    Register(in[4]=indata, load=load, out=stored_data); //register takes 16 bits, hence why 'bus is different size' error
+    Register(in[0..3]=indata, load=load, out=stored_data); //register takes 16 bits, hence why 'bus is different size' error
     
     // 2-bit Counter to track bit output (0 to 3)
     Counter(width=2, enable=enable, reset=load, out=count);
