@@ -3,8 +3,8 @@ CHIP Counter {
     OUT out[2];
 
     PARTS
-    Register(in=next[0],reset=true,clock=clock,out=current[0]);
-    Register(in=next[1],reset=true,clock=clock,out=current[1]);
+    Register(in=next[0],load=true,clock=clock,out=current[0]);
+    Register(in=next[1],load=true,clock=clock,out=current[1]);
 
     Add16(a=current,b[0..1]=enble,out=incrmented);
     Mux16(a=incremented,b=false,sel=reset,out=next);
