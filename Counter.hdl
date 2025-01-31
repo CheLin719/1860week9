@@ -1,6 +1,15 @@
 CHIP Counter {
-    IN width, enable, reset
+    IN enable, reset, clock
+    OUT out[2]
 
+    PARTS
+    Register(in=next[0],reset=true,clock=clock,out=current[0]);
+    Register(in=next[1],reset=true,clock=clock,out=current[1]);
+
+    Add16(a=current,b[0..1]=enble,out=incrmented);
+    Mux16(a=incremented,b=false,sel=reset,out=next);
+
+    And(a=current,b=True,out=out);
     //Make it:
      // 2-bit Counter to track bit output (0 to 3)
 }
