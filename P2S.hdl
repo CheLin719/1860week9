@@ -5,17 +5,17 @@ CHIP P2S {
     PARTS:
     
     // 4-bit Register to store input data
-    Register(in[0..3]=indata, load=load, out=stored_data); //register takes 16 bits, hence why 'bus is different size' error
+    Register(in[0..3]=indata, load=load, out=storeddata); //register takes 16 bits, hence why 'bus is different size' error
     
     // 2-bit Counter to track bit output (0 to 3)
     Counter(width=2, enable=enable, reset=load, out=count);
     
     // Corrected: Use Mux4Way16 to select each bit from the 4-bit stored data
     Mux4Way16(
-        in0[0..3]=stored_data[0],
-        in1[0..3]=stored_data[1],
-        in2[0..3]=stored_data[2],
-        in3[0..3]=stored_data[3],
+        in0[0..3]=storeddata[0],
+        in1[0..3]=storeddata[1],
+        in2[0..3]=storeddata[2],
+        in3[0..3]=storeddata[3],
         sel=count,
         out[0..3]=mux_out
     );
@@ -24,9 +24,9 @@ CHIP P2S {
     And(a=mux_out[0], b=true, out=sout);
     
     // Detect when count reaches 3 to assert complete
-    And(a=count[0], b=count[1], out=complete_signal);
+    And(a=count[0], b=count[1], out=completesignal);
     
     // Generate a one-cycle complete signal
-    And(a=complete_signal, b=enable, out=complete);
+    And(a=completesignal, b=enable, out=complete);
 } 
 
