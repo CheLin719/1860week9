@@ -1,41 +1,36 @@
 CHIP P2S {
     IN indata[4], enable, load;
-    OUT sout,complete;
-
+    OUT sout, complete;
+    
     PARTS:
     
     // 4-bit Register to store input data
-    Register(in[0..3]=indata, load=load, out=storeddata); //register takes 16 bits, hence why 'bus is different size' error
+    Register(in=indata, load=load, out[0]=i0, out[1]=i1, out[2]=i2, out[3]=i3);
     
-    // 2-bit Counter to track bit output (0 to 3)
-    Counter(width=2, enable=enable, reset=load, out=count);
-
-    //The way i did it:
-    //4 bit shifter. 
-    //indata[0],indata[1],indata[2],indata[3]
-    //0 - 0 - 0 - 0  <--OFF, enable = 0 & output of 4 bit shiter = 0. ENABLE = 1 IF ALL 4 BIT SHIFTER BITS ARE 0
-    //1 - 0 - 0 - 0  <--ON, indata[0]         sout = (indata[0] AND 4bitshifter) OR (indata[1] AND 4bitshifter) OR (indata[2] AND 4bitshifter) OR (indata[3] AND 4bitshifter) 
-    //0 - 1 - 0 - 0  <--ON, indata[1]
-    //0 - 0 - 1 - 0  <--ON, indata[2]
-    //0 - 0 - 0 - 1  <--ON, indata[3], complete = 1
+    // Control logic to enable shifting only when enable is active and shifting is not already occurring
+    And(a=enable, b=true, out=enable1);
     
-    // Corrected: Use Mux4Way16 to select each bit from the 4-bit stored data
-    Mux4Way16(
-        in0[0..3]=storeddata[0],
-        in1[0..3]=storeddata[1],
-        in2[0..3]=storeddata[2],
-        in3[0..3]=storeddata[3],
-        sel=count,
-        out[0..3]=mux_out
-    );
+    // Detect when no shift is occurring
+    Or(a=s0, b=s1, out=s00Rs1);
+    Or(a=s2, b=s3, out=s20Rs3);
+    Or(a=s00Rs1, b=s20Rs3, out=spins);
+    Not(in=spins, out=notspins);
+    And(a=enable1, b=notspins, out=Begin);
     
-    // Connect mux output to sout
-    And(a=mux_out[0], b=true, out=sout);
+    // Shift register to control the sequence
+    DFF(in=Begin, out=s0);
+    DFF(in=s0, out=s1);
+    DFF(in=s1, out=s2);
+    DFF(in=s2, out=s3, out=complete);
     
-    // Detect when count reaches 3 to assert complete
-    And(a=count[0], b=count[1], out=completesignal);
+    // AND gates to select the correct bit for output
+    And(a=i0, b=s0, out=b0);
+    And(a=i1, b=s1, out=b1);
+    And(a=i2, b=s2, out=b2);
+    And(a=i3, b=s3, out=b3);
     
-    // Generate a one-cycle complete signal
-    And(a=completesignal, b=enable, out=complete);
-} 
-
+    // OR gate to combine selected output bits
+    Or(a=b0, b=b1, out=sout1);
+    Or(a=b2, b=b3, out=sout2);
+    Or(a=sout1, b=sout2, out=sout);
+}
